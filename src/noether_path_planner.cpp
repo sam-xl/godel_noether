@@ -2,8 +2,8 @@
 
 #include <pluginlib/class_list_macros.h>
 #include <ros/console.h>
-#include <noether/noether.h>
 #include <noether_conversions/noether_conversions.h>
+#include <vtk_viewer/vtk_utils.h>
 #include <path_sequence_planner/simple_path_sequence_planner.h>
 #include <eigen_conversions/eigen_msg.h>
 #include <Eigen/Dense>
@@ -292,7 +292,7 @@ planPaths(vtkSmartPointer<vtkPolyData> mesh,
 {
   std::vector<vtkSmartPointer<vtkPolyData>> meshes;
   meshes.push_back(mesh);
-
+  
   tool_path_planner::RasterToolPathPlanner planner;
   planner.setTool(tool);
   std::vector<std::vector<tool_path_planner::ProcessPath>> paths;
@@ -437,10 +437,8 @@ bool godel_noether::NoetherPathPlanner::generatePath(
   auto process_paths = planPaths(vtk_data, tool);
   ROS_INFO("generatePath: finished planning paths");
 
-  auto paths = noether::convertVTKtoGeometryMsgs(process_paths);
-
+  auto paths = tool_path_planner::convertVTKtoGeometryMsgs(process_paths);
   paths = applyMargins(paths, 0.25 * 0.0254);
-
   path = sequence(paths);
 
   ROS_INFO("generatePath: converted to ROS messages - DONE!");
