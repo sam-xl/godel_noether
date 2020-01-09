@@ -2,6 +2,8 @@
 #define GODEL_NOETHER_PATH_PLANNER_H
 
 #include <path_planning_plugins_base/path_planning_base.h>
+#include <tool_path_planner/raster_tool_path_planner.h>
+#include <tool_path_planner/utilities.h>
 
 namespace godel_noether
 {

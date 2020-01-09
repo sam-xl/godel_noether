@@ -2,8 +2,8 @@
 
 #include <pluginlib/class_list_macros.h>
 #include <ros/console.h>
-#include <noether/noether.h>
 #include <noether_conversions/noether_conversions.h>
+#include <vtk_viewer/vtk_utils.h>
 #include <path_sequence_planner/simple_path_sequence_planner.h>
 #include <eigen_conversions/eigen_msg.h>
 #include <Eigen/Dense>
@@ -266,7 +266,6 @@ tool_path_planner::ProcessTool loadTool()
   tool.line_spacing = 0.025;
   tool.tool_offset = 0.0; // currently unused
   tool.intersecting_plane_height = 0.05; // 0.5 works best, not sure if this should be included in the tool
-  tool.nearest_neighbors = 5; // not sure if this should be a part of the tool
   tool.min_hole_size = 0.01;
   return tool;
 }
@@ -277,7 +276,7 @@ planPaths(vtkSmartPointer<vtkPolyData> mesh,
 {
   std::vector<vtkSmartPointer<vtkPolyData>> meshes;
   meshes.push_back(mesh);
-
+  
   tool_path_planner::RasterToolPathPlanner planner;
   planner.setTool(tool);
   std::vector<std::vector<tool_path_planner::ProcessPath>> paths;
@@ -306,7 +305,7 @@ bool godel_noether::NoetherPathPlanner::generatePath(
   auto process_paths = planPaths(vtk_data, tool);
   ROS_INFO("generatePath: finished planning paths");
 
-  auto paths = noether::convertVTKtoGeometryMsgs(process_paths);
+  auto paths = tool_path_planner::convertVTKtoGeometryMsgs(process_paths);
   path = sequence(paths);
 
   ROS_INFO("generatePath: converted to ROS messages - DONE!");
